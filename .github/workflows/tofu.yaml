@@ -17,6 +17,10 @@ jobs:
   plan:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./infra
+
     env:
       TF_INPUT: "false"
       TF_VAR_do_token: ${{ secrets.DO_TOKEN }}
