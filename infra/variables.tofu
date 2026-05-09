@@ -1,0 +1,57 @@
+variable "do_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "cloudflare_api_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "cloudflare_zone_id" {
+  type = string
+}
+
+variable "domain" {
+  type = string
+}
+
+variable "region" {
+  type    = string
+  default = "blr1"
+}
+
+variable "droplet_size" {
+  type    = string
+  default = "s-2vcpu-4gb"
+}
+
+variable "add_workers" {
+  type    = bool
+  default = false
+}
+
+# variable "azure_subscription_id" {
+#   type      = string
+#   sensitive = true
+# }
+
+variable "resource_group_name" {
+  type    = string
+  default = "homelab"
+}
+
+variable "admin_username" {
+  type    = string
+  default = "ayush"
+}
+
+variable "ssh_public_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "server_vm_size" {
+  type    = string
+  default = "Standard_B1s"
+}

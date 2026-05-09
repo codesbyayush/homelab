@@ -1,0 +1,7 @@
+do_token             = "dop_v1_xxxxx"
+cloudflare_api_token = "xxxxx"
+cloudflare_zone_id   = "xxxxx"
+domain               = "example.com"
+region               = "blr1"
+droplet_size         = "s-2vcpu-2gb"
+add_workers          = false
