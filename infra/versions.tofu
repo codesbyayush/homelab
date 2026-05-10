@@ -29,5 +29,6 @@ terraform {
     storage_account_name = "opentofustatebucket"
     container_name       = "tfstate"
     key                  = "k3s/infra.tfstate"
+    use_azuread_auth     = true
   }
 }
