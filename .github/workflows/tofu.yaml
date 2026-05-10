@@ -60,3 +60,6 @@ jobs:
 
       - name: Show plan
         run: tofu show -no-color tfplan
+
+      - name: Apply
+        run: tofu apply -input=false -no-color tfplan
