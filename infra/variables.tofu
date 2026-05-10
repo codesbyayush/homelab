@@ -85,8 +85,3 @@ variable "oci_compartment_ocid" {
   type      = string
   sensitive = true
 }
-
-variable "oci_ad_index" {
-  type    = string
-  default = "1"
-}

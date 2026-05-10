@@ -123,7 +123,7 @@ data "oci_core_images" "oracle_linux_a1" {
 
 resource "oci_core_instance" "server" {
   compartment_id      = var.oci_compartment_ocid
-  availability_domain = data.oci_identity_availability_domains.ads.availability_domains[tonumber(var.oci_ad_index)].name
+  availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
   display_name        = "k3s-server-oracle"
   shape               = "VM.Standard.A1.Flex"
 
