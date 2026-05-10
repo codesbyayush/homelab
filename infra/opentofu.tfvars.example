@@ -5,3 +5,10 @@ domain               = "example.com"
 region               = "blr1"
 droplet_size         = "s-2vcpu-2gb"
 add_workers          = false
+
+oci_tenancy_ocid     = "ocid1.tenancy.oc1..xxxxx"
+oci_user_ocid        = "ocid1.user.oc1..xxxxx"
+oci_fingerprint      = "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+oci_region           = "ap-hyderabad-1"
+oci_compartment_ocid = "ocid1.compartment.oc1..xxxxx"
+oci_arm64_image_ocid = "ocid1.image.oc1.ap-hyderabad-1.xxxxx"

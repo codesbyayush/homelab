@@ -36,22 +36,52 @@ variable "add_workers" {
 #   sensitive = true
 # }
 
-variable "resource_group_name" {
-  type    = string
-  default = "homelab"
-}
+# variable "resource_group_name" {
+#   type    = string
+#   default = "homelab"
+# }
 
-variable "admin_username" {
-  type    = string
-  default = "ayush"
-}
+# variable "admin_username" {
+#   type    = string
+#   default = "ayush"
+# }
 
 variable "ssh_public_key" {
   type      = string
   sensitive = true
 }
 
-variable "server_vm_size" {
+# variable "server_vm_size" {
+#   type    = string
+#   default = "Standard_B2ats_v2"
+# }
+
+variable "oci_tenancy_ocid" {
+  type      = string
+  sensitive = true
+}
+
+variable "oci_user_ocid" {
+  type      = string
+  sensitive = true
+}
+
+variable "oci_private_key" {
   type    = string
-  default = "Standard_B2ats_v2"
+    sensitive = true
+}
+
+variable "oci_fingerprint" {
+  type      = string
+  sensitive = true
+}
+
+variable "oci_region" {
+  type    = string
+  default = "ap-mumbai-1"
+}
+
+variable "oci_compartment_ocid" {
+  type      = string
+  sensitive = true
 }

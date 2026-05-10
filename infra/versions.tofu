@@ -22,6 +22,10 @@ terraform {
       source  = "hashicorp/time"
       version = "~> 0.12"
     }
+    oci = {
+      source  = "oracle/oci"
+      version = "~> 7.0"
+    }
   }
 
   backend "azurerm" {
