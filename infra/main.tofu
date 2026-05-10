@@ -44,6 +44,10 @@ resource "cloudflare_dns_record" "wildcard_a" {
 resource "time_sleep" "wait_for_k3s_server" {
   depends_on      = [azurerm_linux_virtual_machine.server, azurerm_public_ip.server]
   create_duration = "90s"
+
+  lifecycle {
+    enabled = var.add_workers
+  }
 }
 
 resource "digitalocean_droplet" "k3s_worker_1" {
@@ -186,42 +190,43 @@ resource "azurerm_network_interface_security_group_association" "server" {
 }
 
 resource "azurerm_linux_virtual_machine" "server" {
-    name                = "k3s-server-azure"
-    resource_group_name = data.azurerm_resource_group.rg.name
-    location            = data.azurerm_resource_group.rg.location
-    size                = var.server_vm_size
-    admin_username      = var.admin_username
-    network_interface_ids = [
-        azurerm_network_interface.server.id
-    ]
+  name                = "k3s-server-azure"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  size                = var.server_vm_size
+  admin_username      = var.admin_username
+  network_interface_ids = [
+    azurerm_network_interface.server.id
+  ]
 
-    disable_password_authentication = true
+  disable_password_authentication = true
 
-    admin_ssh_key {
-        username   = var.admin_username
-        public_key = var.ssh_public_key
-    }
+  admin_ssh_key {
+    username   = var.admin_username
+    public_key = var.ssh_public_key
+  }
 
-    os_disk {
-        name                 = "k3s-server-osdisk"
-        caching              = "ReadWrite"
-        storage_account_type = "Standard_LRS"
-        disk_size_gb         = 64
-    }
+  os_disk {
+    name                 = "k3s-server-osdisk"
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 64
+  }
 
-    source_image_reference {
-        publisher = "Canonical"
-        offer     = "ubuntu-26_04-lts"
-        sku       = "server"
-        version   = "latest"
-    }
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "ubuntu-26_04-lts"
+    sku       = "server"
+    version   = "latest"
+  }
 
-    custom_data = base64encode(<<-EOF
+  custom_data = base64encode(<<-EOF
     #!/bin/bash
     set -euxo pipefail
 
-    dnf -y update
-    dnf -y install curl
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y curl ca-certificates
 
     curl -sfL https://get.k3s.io | \
       K3S_TOKEN='${random_password.k3s_token.result}' \
@@ -231,7 +236,7 @@ resource "azurerm_linux_virtual_machine" "server" {
     systemctl enable k3s
     systemctl restart k3s
   EOF
-    )
+  )
 }
 
 
