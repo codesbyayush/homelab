@@ -210,9 +210,9 @@ resource "azurerm_linux_virtual_machine" "server" {
     }
 
     source_image_reference {
-        publisher = "RedHat"
-        offer     = "RHEL"
-        sku       = "9_4"
+        publisher = "Canonical"
+        offer     = "ubuntu-26_04-lts"
+        sku       = "server"
         version   = "latest"
     }
 
