@@ -230,7 +230,7 @@ resource "azurerm_linux_virtual_machine" "server" {
 
     curl -sfL https://get.k3s.io | \
       K3S_TOKEN='${random_password.k3s_token.result}' \
-      INSTALL_K3S_EXEC='server --write-kubeconfig-mode 644 --node-ip $(hostname -I | awk "{print $1}") --node-external-ip ${azurerm_public_ip.server.ip_address} --cluster-cidr 10.200.0.0/16 --service-cidr 10.201.0.0/16' \
+      INSTALL_K3S_EXEC='server --write-kubeconfig-mode 644 --node-external-ip ${azurerm_public_ip.server.ip_address} --cluster-cidr 10.200.0.0/16 --service-cidr 10.201.0.0/16' \
       sh -
 
     systemctl enable k3s
@@ -238,32 +238,3 @@ resource "azurerm_linux_virtual_machine" "server" {
   EOF
   )
 }
-
-
-# resource "digitalocean_droplet" "k3s_server" {
-#     name     = "k3s-server-1"
-#     region   = var.region
-#     size     = var.droplet_size
-#     image    = "fedora-43-x64"
-#     ssh_keys = [data.digitalocean_ssh_key.k3s.id, data.digitalocean_ssh_key.personal.id]
-#     backups = false
-#     resize_disk = false
-#     tags = ["k3s", "homelab", "first-node"]
-#     droplet_agent = true
-#
-#     user_data = <<-EOF
-#     #!/bin/bash
-#     set -euxo pipefail
-#
-#     dnf -y update
-#     dnf -y install curl
-#
-#     curl -sfL https://get.k3s.io | \
-#       K3S_TOKEN='${random_password.k3s_token.result}' \
-#       INSTALL_K3S_EXEC='server --write-kubeconfig-mode 644' \
-#       sh -
-#
-#     systemctl enable k3s
-#     systemctl restart k3s
-#   EOF
-# }
