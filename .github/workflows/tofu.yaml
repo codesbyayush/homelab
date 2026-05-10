@@ -6,7 +6,7 @@ on:
       oci_ad_index:
         description: "OCI Availability Domain index"
         required: true
-        default: "0"
+        default: "1"
         type: choice
         options:
           - "0"
@@ -47,7 +47,7 @@ jobs:
       TF_VAR_oci_compartment_ocid: ${{ secrets.ORC_COMPARTMENT_OCID }}
       TF_VAR_oci_fingerprint: ${{ secrets.ORC_FINGERPRINT }}
       TF_VAR_oci_private_key: ${{ secrets.ORC_PRIVATE_KEY }}
-      TF_VAR_oci_ad_index: ${{ inputs.oci_ad_index }}
+      TF_VAR_oci_ad_index: ${{ inputs.oci_ad_index || '1' }}
 
     steps:
       - name: Checkout

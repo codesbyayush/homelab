@@ -87,6 +87,6 @@ variable "oci_compartment_ocid" {
 }
 
 variable "oci_ad_index" {
-  type    = number
-  default = 1
+  type    = string
+  default = "1"
 }
