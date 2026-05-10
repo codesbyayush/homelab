@@ -67,8 +67,8 @@ variable "oci_user_ocid" {
 }
 
 variable "oci_private_key" {
-  type    = string
-    sensitive = true
+  type      = string
+  sensitive = true
 }
 
 variable "oci_fingerprint" {
@@ -84,4 +84,9 @@ variable "oci_region" {
 variable "oci_compartment_ocid" {
   type      = string
   sensitive = true
+}
+
+variable "oci_ad_index" {
+  type    = number
+  default = 1
 }
