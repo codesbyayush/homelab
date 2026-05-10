@@ -186,37 +186,37 @@ resource "azurerm_network_interface_security_group_association" "server" {
 }
 
 resource "azurerm_linux_virtual_machine" "server" {
-  name                = "k3s-server-azure"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  location            = data.azurerm_resource_group.rg.location
-  size                = var.server_vm_size
-  admin_username      = var.admin_username
-  network_interface_ids = [
-    azurerm_network_interface.server.id
-  ]
+    name                = "k3s-server-azure"
+    resource_group_name = data.azurerm_resource_group.rg.name
+    location            = data.azurerm_resource_group.rg.location
+    size                = var.server_vm_size
+    admin_username      = var.admin_username
+    network_interface_ids = [
+        azurerm_network_interface.server.id
+    ]
 
-  disable_password_authentication = true
+    disable_password_authentication = true
 
-  admin_ssh_key {
-    username   = var.admin_username
-    public_key = var.ssh_public_key
-  }
+    admin_ssh_key {
+        username   = var.admin_username
+        public_key = var.ssh_public_key
+    }
 
-  os_disk {
-    name                 = "k3s-server-osdisk"
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-    disk_size_gb         = 64
-  }
+    os_disk {
+        name                 = "k3s-server-osdisk"
+        caching              = "ReadWrite"
+        storage_account_type = "Standard_LRS"
+        disk_size_gb         = 64
+    }
 
-  source_image_reference {
-    publisher = "fedora"
-    offer     = "fedora"
-    sku       = "43-gen2"
-    version   = "latest"
-  }
+    source_image_reference {
+        publisher = "RedHat"
+        offer     = "RHEL"
+        sku       = "9_4"
+        version   = "latest"
+    }
 
-  custom_data = base64encode(<<-EOF
+    custom_data = base64encode(<<-EOF
     #!/bin/bash
     set -euxo pipefail
 
@@ -225,13 +225,13 @@ resource "azurerm_linux_virtual_machine" "server" {
 
     curl -sfL https://get.k3s.io | \
       K3S_TOKEN='${random_password.k3s_token.result}' \
-      INSTALL_K3S_EXEC='server --write-kubeconfig-mode 644 --node-ip $(hostname -I | awk "{print $1}")' --node-external-ip ${azurerm_public_ip.server.ip_address} --cluster-cidr 10.200.0.0/16 --service-cidr 10.201.0.0/16' \
+      INSTALL_K3S_EXEC='server --write-kubeconfig-mode 644 --node-ip $(hostname -I | awk "{print $1}") --node-external-ip ${azurerm_public_ip.server.ip_address} --cluster-cidr 10.200.0.0/16 --service-cidr 10.201.0.0/16' \
       sh -
 
     systemctl enable k3s
     systemctl restart k3s
   EOF
-  )
+    )
 }
 
 
