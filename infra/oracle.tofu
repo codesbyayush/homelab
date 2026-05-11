@@ -101,6 +101,54 @@ resource "oci_core_network_security_group_security_rule" "https_ingress" {
   }
 }
 
+resource "oci_core_network_security_group_security_rule" "dns_udp_ingress" {
+    network_security_group_id = oci_core_network_security_group.k3s_server.id
+    direction                 = "INGRESS"
+    protocol                  = "17"
+    source                    = "0.0.0.0/0"
+    source_type               = "CIDR_BLOCK"
+    description               = "DNS UDP"
+
+    udp_options {
+        destination_port_range {
+            min = 53
+            max = 53
+        }
+    }
+}
+
+resource "oci_core_network_security_group_security_rule" "dns_tcp_ingress" {
+    network_security_group_id = oci_core_network_security_group.k3s_server.id
+    direction                 = "INGRESS"
+    protocol                  = "6"
+    source                    = "0.0.0.0/0"
+    source_type               = "CIDR_BLOCK"
+    description               = "DNS TCP"
+
+    tcp_options {
+        destination_port_range {
+            min = 53
+            max = 53
+        }
+    }
+}
+
+resource "oci_core_network_security_group_security_rule" "adguard_setup" {
+    network_security_group_id = oci_core_network_security_group.k3s_server.id
+    direction                 = "INGRESS"
+    protocol                  = "6"
+    source                    = "0.0.0.0/0"
+    source_type               = "CIDR_BLOCK"
+    description               = "Adguard setup TCP"
+
+    tcp_options {
+        destination_port_range {
+            min = 32000
+            max = 32000
+        }
+    }
+}
+
 resource "oci_core_subnet" "k3s" {
   compartment_id             = var.oci_compartment_ocid
   vcn_id                     = oci_core_vcn.k3s.id
