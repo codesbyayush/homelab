@@ -112,11 +112,11 @@ resource "oci_core_subnet" "k3s" {
   prohibit_public_ip_on_vnic = false
 }
 
-data "oci_core_images" "oracle_linux_a1" {
+data "oci_core_images" "oracle_linux_e4" {
   compartment_id           = var.oci_compartment_ocid
   operating_system         = "Oracle Linux"
   operating_system_version = "9"
-  shape                    = "VM.Standard.A1.Flex"
+  shape                    = "VM.Standard.E4.Flex"
   sort_by                  = "TIMECREATED"
   sort_order               = "DESC"
 }
@@ -125,16 +125,16 @@ resource "oci_core_instance" "server" {
   compartment_id      = var.oci_compartment_ocid
   availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
   display_name        = "k3s-server-oracle"
-  shape               = "VM.Standard.A1.Flex"
+  shape               = "VM.Standard.E4.Flex"
 
   shape_config {
-    ocpus         = 1
-    memory_in_gbs = 6
+    ocpus         = 4
+    memory_in_gbs = 24
   }
 
   source_details {
     source_type             = "image"
-    source_id               = data.oci_core_images.oracle_linux_a1.images[0].id
+    source_id               = data.oci_core_images.oracle_linux_e4.images[0].id
     boot_volume_size_in_gbs = 100
   }
 
@@ -154,16 +154,6 @@ resource "oci_core_instance" "server" {
         - curl
         - ca-certificates
         - jq
-
-      write_files:
-        - path: /etc/ssh/sshd_config.d/99-hardening.conf
-          permissions: "0644"
-          content: |
-            PasswordAuthentication no
-            KbdInteractiveAuthentication no
-            ChallengeResponseAuthentication no
-            PermitRootLogin no
-            PubkeyAuthentication yes
 
       runcmd:
         - systemctl restart ssh || systemctl restart sshd
