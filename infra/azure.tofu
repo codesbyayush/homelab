@@ -95,37 +95,53 @@ resource "azurerm_linux_virtual_machine" "dns_exit" {
   }
 
   source_image_reference {
-    publisher = "RedHat"
-    offer     = "RHEL"
-    sku       = "9-lvm-gen2"
+    publisher = "almalinux"
+    offer     = "almalinux"
+    sku       = "9-gen2"
     version   = "latest"
   }
-
-  custom_data = base64encode(<<-EOF
-    #!/bin/bash
-    set -euxo pipefail
-
-    dnf -y update
-    dnf -y install curl ca-certificates tar
-
-    cat >/etc/sysctl.d/99-tailscale-exit-node.conf <<'SYSCTL'
-    net.ipv4.ip_forward = 1
-    net.ipv6.conf.all.forwarding = 1
-    SYSCTL
-    sysctl --system
-
-    tailscale up --auth-key='${var.tailscale_auth_key}' --hostname='azure-dns-exit' --advertise-exit-node --ssh
-
-    curl -fsSL -o /tmp/AdGuardHome_linux_amd64.tar.gz https://static.adguard.com/adguardhome/release/AdGuardHome_linux_amd64.tar.gz
-    tar -C /opt -xzf /tmp/AdGuardHome_linux_amd64.tar.gz
-    /opt/AdGuardHome/AdGuardHome -s install
-
-    systemctl enable AdGuardHome
-    systemctl restart AdGuardHome
-  EOF
-  )
 }
 
+resource "azurerm_virtual_machine_extension" "dns_exit_bootstrap" {
+  name                 = "dns-exit-bootstrap"
+  virtual_machine_id   = azurerm_linux_virtual_machine.dns_exit.id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.1"
+
+  protected_settings = jsonencode({
+    commandToExecute = <<-EOT
+      /bin/bash -lc '
+      set -euxo pipefail
+
+      dnf -y update
+      dnf -y install curl ca-certificates tar
+
+      curl -fsSL https://tailscale.com/install.sh | sh
+
+      cat >/etc/sysctl.d/99-tailscale-exit-node.conf <<'"'"'SYSCTL'"'"'
+      net.ipv4.ip_forward = 1
+      net.ipv6.conf.all.forwarding = 1
+      SYSCTL
+      sysctl --system
+
+      systemctl enable --now tailscaled
+
+      tailscale up \
+        --auth-key="${var.tailscale_auth_key}" \
+        --hostname="azure-dns-exit" \
+        --advertise-exit-node \
+        --ssh
+
+      curl -fsSL -o /tmp/AdGuardHome_linux_amd64.tar.gz https://static.adguard.com/adguardhome/release/AdGuardHome_linux_amd64.tar.gz
+      tar -C /opt -xzf /tmp/AdGuardHome_linux_amd64.tar.gz
+      /opt/AdGuardHome/AdGuardHome -s install
+
+      systemctl enable --now AdGuardHome
+      '
+    EOT
+  })
+}
 
 resource "azurerm_consumption_budget_subscription" "monthly_guardrail" {
   name            = "homelab-monthly-guardrail"
