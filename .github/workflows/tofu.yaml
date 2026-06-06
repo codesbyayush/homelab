@@ -32,6 +32,8 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_tailscale_auth_key: ${{ secrets.TAILSCALE_AUTH_KEY }}
       TF_VAR_oci_tenancy_ocid: ${{ secrets.ORC_TENANCY_OCID }}
       TF_VAR_oci_user_ocid: ${{ secrets.ORC_USER_OCID }}
       TF_VAR_oci_compartment_ocid: ${{ secrets.ORC_COMPARTMENT_OCID }}
