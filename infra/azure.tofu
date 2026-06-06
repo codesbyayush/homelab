@@ -71,14 +71,12 @@ resource "azurerm_network_interface_security_group_association" "dns_exit" {
 }
 
 resource "azurerm_linux_virtual_machine" "dns_exit" {
-  name                = "dns-exit-azure"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  location            = data.azurerm_resource_group.rg.location
-  size                = "Standard_B2ats_v2"
-  admin_username      = var.admin_username
-  network_interface_ids = [
-    azurerm_network_interface.dns_exit.id
-  ]
+  name                  = "dns-exit-azure"
+  resource_group_name   = data.azurerm_resource_group.rg.name
+  location              = data.azurerm_resource_group.rg.location
+  size                  = "Standard_B2ats_v2"
+  admin_username        = var.admin_username
+  network_interface_ids = [azurerm_network_interface.dns_exit.id]
 
   disable_password_authentication = true
 
@@ -96,7 +94,7 @@ resource "azurerm_linux_virtual_machine" "dns_exit" {
 
   source_image_reference {
     publisher = "almalinux"
-    offer     = "almalinux"
+    offer     = "almalinux-x86_64"
     sku       = "9-gen2"
     version   = "latest"
   }
@@ -113,30 +111,19 @@ resource "azurerm_virtual_machine_extension" "dns_exit_bootstrap" {
     commandToExecute = <<-EOT
       /bin/bash -lc '
       set -euxo pipefail
-
       dnf -y update
       dnf -y install curl ca-certificates tar
-
       curl -fsSL https://tailscale.com/install.sh | sh
-
       cat >/etc/sysctl.d/99-tailscale-exit-node.conf <<'"'"'SYSCTL'"'"'
       net.ipv4.ip_forward = 1
       net.ipv6.conf.all.forwarding = 1
       SYSCTL
       sysctl --system
-
       systemctl enable --now tailscaled
-
-      tailscale up \
-        --auth-key="${var.tailscale_auth_key}" \
-        --hostname="azure-dns-exit" \
-        --advertise-exit-node \
-        --ssh
-
+      tailscale up --auth-key="${var.tailscale_auth_key}" --hostname="azure-dns-exit" --advertise-exit-node --ssh
       curl -fsSL -o /tmp/AdGuardHome_linux_amd64.tar.gz https://static.adguard.com/adguardhome/release/AdGuardHome_linux_amd64.tar.gz
       tar -C /opt -xzf /tmp/AdGuardHome_linux_amd64.tar.gz
       /opt/AdGuardHome/AdGuardHome -s install
-
       systemctl enable --now AdGuardHome
       '
     EOT
