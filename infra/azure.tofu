@@ -160,7 +160,7 @@ resource "azurerm_linux_virtual_machine" "k3s" {
     name                 = "k3s-server-osdisk"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
-    disk_size_gb         = 30
+    disk_size_gb         = 64
   }
 
   source_image_reference {
@@ -213,7 +213,7 @@ resource "azurerm_linux_virtual_machine" "dns_exit" {
     name                 = "dns-exit-osdisk"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
-    disk_size_gb         = 30
+    disk_size_gb         = 64
   }
 
   source_image_reference {
