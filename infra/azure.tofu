@@ -196,7 +196,7 @@ resource "azurerm_linux_virtual_machine" "dns_exit" {
   name                = "dns-exit-azure"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
-  size                = "Standard_B1s"
+  size                = "Standard_B2pts_v2"  # ARM64
   admin_username      = var.admin_username
   network_interface_ids = [
     azurerm_network_interface.dns_exit.id
@@ -217,9 +217,9 @@ resource "azurerm_linux_virtual_machine" "dns_exit" {
   }
 
   source_image_reference {
-    publisher = "RedHat"
-    offer     = "RHEL"
-    sku       = "9-lvm-gen2"
+    publisher = "almalinux"
+    offer     = "almalinux-arm64"
+    sku       = "9-gen2"
     version   = "latest"
   }
 
