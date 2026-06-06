@@ -1,10 +1,10 @@
-# provider "digitalocean" {
-#   token = var.do_token
-# }
+provider "digitalocean" {
+  token = var.do_token
+}
 
-# provider "cloudflare" {
-#   api_token = var.cloudflare_api_token
-# }
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
+}
 
 # data "digitalocean_ssh_key" "k3s" {
 #   name = "k3s_adguard"
