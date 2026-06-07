@@ -117,6 +117,10 @@ resource "azurerm_virtual_machine_extension" "dns_exit_bootstrap" {
       set -euxo pipefail
       dnf -y update
       dnf -y install curl ca-certificates tar
+      curl -fsSL -o /tmp/AdGuardHome_linux_amd64.tar.gz https://static.adguard.com/adguardhome/release/AdGuardHome_linux_amd64.tar.gz
+      tar -C /opt -xzf /tmp/AdGuardHome_linux_amd64.tar.gz
+      /opt/AdGuardHome/AdGuardHome -s install
+      systemctl enable --now AdGuardHome
       curl -fsSL https://tailscale.com/install.sh | sh
       cat >/etc/sysctl.d/99-tailscale-exit-node.conf <<'"'"'SYSCTL'"'"'
       net.ipv4.ip_forward = 1
@@ -125,10 +129,6 @@ resource "azurerm_virtual_machine_extension" "dns_exit_bootstrap" {
       sysctl --system
       systemctl enable --now tailscaled
       tailscale up --auth-key="${var.tailscale_auth_key}" --hostname="azure-dns-exit" --advertise-exit-node --ssh
-      curl -fsSL -o /tmp/AdGuardHome_linux_amd64.tar.gz https://static.adguard.com/adguardhome/release/AdGuardHome_linux_amd64.tar.gz
-      tar -C /opt -xzf /tmp/AdGuardHome_linux_amd64.tar.gz
-      /opt/AdGuardHome/AdGuardHome -s install
-      systemctl enable --now AdGuardHome
       '
     EOT
   })
