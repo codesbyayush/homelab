@@ -1,4 +1,4 @@
-name: tofu-plan
+name: tofu-apply
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: tofu-plan-main
+  group: tofu-apply-main
   cancel-in-progress: false
 
 permissions:
@@ -16,7 +16,8 @@ permissions:
 jobs:
   plan:
     runs-on: ubuntu-latest
-
+    environment: homelab-prod
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: ./infra
@@ -28,10 +29,6 @@ jobs:
       TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
       TF_VAR_domain: ${{ secrets.DOMAIN }}
       TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
-      ARM_USE_OIDC: "true"
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       TF_VAR_azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       TF_VAR_tailscale_auth_key: ${{ secrets.TAILSCALE_AUTH_KEY }}
       TF_VAR_oci_tenancy_ocid: ${{ secrets.ORC_TENANCY_OCID }}
@@ -39,6 +36,10 @@ jobs:
       TF_VAR_oci_compartment_ocid: ${{ secrets.ORC_COMPARTMENT_OCID }}
       TF_VAR_oci_fingerprint: ${{ secrets.ORC_FINGERPRINT }}
       TF_VAR_oci_private_key: ${{ secrets.ORC_PRIVATE_KEY }}
+      ARM_USE_OIDC: "true"
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     steps:
       - name: Checkout
