@@ -47,8 +47,12 @@ resource "azurerm_public_ip" "dns_exit" {
   name                = "dns-exit-pip"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
-  sku                 = "Basic"
+  allocation_method   = "Static"
+  sku                 = "Standard"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "azurerm_network_interface" "dns_exit" {
@@ -95,7 +99,7 @@ resource "azurerm_linux_virtual_machine" "dns_exit" {
   source_image_reference {
     publisher = "almalinux"
     offer     = "almalinux-x86_64"
-    sku       = "9-gen2"
+    sku       = "10-gen2"
     version   = "latest"
   }
 }
