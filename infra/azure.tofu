@@ -47,8 +47,8 @@ resource "azurerm_public_ip" "dns_exit" {
   name                = "dns-exit-pip"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
+  allocation_method   = "Dynamic"
+  sku                 = "Basic"
 }
 
 resource "azurerm_network_interface" "dns_exit" {
@@ -88,7 +88,7 @@ resource "azurerm_linux_virtual_machine" "dns_exit" {
   os_disk {
     name                 = "dns-exit-osdisk"
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    storage_account_type = "Premium_LRS"
     disk_size_gb         = 64
   }
 
