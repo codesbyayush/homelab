@@ -16,7 +16,7 @@ permissions:
 jobs:
   plan:
     runs-on: ubuntu-latest
-    environment: homelab-prod
+    # environment: homelab-prod
     timeout-minutes: 15
     defaults:
       run:
